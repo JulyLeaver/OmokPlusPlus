@@ -1,1 +1,1 @@
-# OmokPlusPlus
+# Omok++
