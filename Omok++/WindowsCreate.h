@@ -6,7 +6,7 @@
 class WindowsCreate
 {
 public:
-	const int WND_WIDTH = 1000, WND_HEIGHT = 600;
+	const int WND_WIDTH = 640, WND_HEIGHT = 600;
 	HWND hWnd; // 메인 윈도우 핸들
 
 public:

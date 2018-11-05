@@ -3,11 +3,13 @@
 #include <Windows.h>
 #include "WindowsCreate.h"
 #include "ObjectManager.h"
+#include "Logger.h"
 
 class WindowsEngin : public WindowsCreate
 {
 private:
 	ObjectManager* objManager;
+	Logger* logger;
 
 public:
 	WindowsEngin(HINSTANCE hInstance, int nCmdShow);

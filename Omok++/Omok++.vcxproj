@@ -121,6 +121,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="GameBoard.cpp" />
+    <ClCompile Include="Logger.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="ObjectManager.cpp" />
     <ClCompile Include="Omok.cpp" />
@@ -129,7 +130,9 @@
     <ClCompile Include="WindowsEngin.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Event.h" />
     <ClInclude Include="GameBoard.h" />
+    <ClInclude Include="Logger.h" />
     <ClInclude Include="ObjectManager.h" />
     <ClInclude Include="Omok.h" />
     <ClInclude Include="util.h" />

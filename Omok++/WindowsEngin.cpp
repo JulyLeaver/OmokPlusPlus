@@ -3,8 +3,11 @@
 
 WindowsEngin::WindowsEngin(HINSTANCE hInstance, int nCmdShow) : WindowsCreate(hInstance, nCmdShow)
 {
+	logger = new Logger(hWnd);
+
 	objManager = ObjectManager::getInstance();
-	objManager->add(new GameBoard(hWnd));
+	objManager->add(new GameBoard(hWnd, logger));
+
 }
 
 WindowsEngin::~WindowsEngin()
@@ -29,4 +32,5 @@ void WindowsEngin::init()
 void WindowsEngin::destroy()
 {
 	delete objManager;
+	logger->end();
 }
