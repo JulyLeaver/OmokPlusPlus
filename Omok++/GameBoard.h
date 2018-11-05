@@ -38,9 +38,14 @@ private:
 	Omok omok;
 
 public:
+	const int PREV_BUTTON_ID = 1000;
+	const int AI_BUTTON_ID = 1001;
+
+public:
 	GameBoard(const HWND hWnd, Logger* logger);
 	~GameBoard();
 	virtual void draw(HDC& hdc, PAINTSTRUCT& ps) override;
 	virtual void mouseEvent(UINT& ent, WPARAM& wParam, LPARAM& lParam) override;
+	virtual void cmdEvent(WPARAM wParam, LPARAM lParam) override;
 };
 

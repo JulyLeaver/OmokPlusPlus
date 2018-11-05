@@ -3,10 +3,12 @@
 #include <Windows.h>
 #include <functional>
 
+using namespace std;
+
 class WindowsCreate
 {
 public:
-	static const int WND_WIDTH = 640, WND_HEIGHT = 600;
+	static const int WND_WIDTH = 660, WND_HEIGHT = 600;
 	HWND hWnd; // 메인 윈도우 핸들
 	
 public:
@@ -19,6 +21,7 @@ private:
 	virtual void init() = 0;
 	virtual void draw(HDC hdc, PAINTSTRUCT ps) = 0;
 	virtual void mouseEvent(UINT ent, WPARAM wParam, LPARAM lParam) = 0;
+	virtual void cmdEvent(WPARAM wParam, LPARAM lParam) = 0;
 	virtual void destroy() = 0;
 
 public:
@@ -26,8 +29,10 @@ public:
 	static HINSTANCE hInstance; // 프로그램 핸들
 	static LRESULT CALLBACK WndProc(HWND hWnd, UINT iMsg, WPARAM wParam, LPARAM lPara);
 	
-	static std::function<void(HDC, PAINTSTRUCT)> drawFunc;
+	static function<void(HDC, PAINTSTRUCT)> drawFunc;
 
 	// "마우스 L, R 버튼 다운, 움직임" 만 처리
-	static std::function<void(UINT, WPARAM, LPARAM)> mouseEventFunc;
+	static function<void(UINT, WPARAM, LPARAM)> mouseEventFunc;
+	
+	static function<void(WPARAM, LPARAM)> cmdEventFunc;
 };

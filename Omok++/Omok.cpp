@@ -1,6 +1,6 @@
 #include "Omok.h"
 
-const char* Omok::Player2String[] = { "Èæ", "¹é" };
+const string Omok::Player2String[] = { "Èæ", "¹é" };
 
 Omok::Omok() :
 	DirCostY{ -1, 1, 0, 0, -1, -1, 1, 1 },

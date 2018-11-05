@@ -18,6 +18,7 @@ public:
 private:
 	virtual void draw(HDC hdc, PAINTSTRUCT ps) override;
 	virtual void mouseEvent(UINT ent, WPARAM wParam, LPARAM lParam) override;
+	virtual void cmdEvent(WPARAM wParam, LPARAM lParam) override;
 
 	virtual void init() override;
 	virtual void destroy() override;

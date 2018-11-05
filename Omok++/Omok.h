@@ -34,7 +34,7 @@ private:
 
 public:
 	const static int SIZE = 15;
-	const static char* Player2String[2];
+	const static string Player2String[2];
 
 private:
 	Board board;
@@ -52,6 +52,7 @@ public:
 	inline const Board& getBoard() { return board; }
 	inline const set<Record>& getRecords() { return records; }
 	inline Player getPointPlayer(const Vec2& p) { return board[p.y][p.x]; }
+	inline Player getNowPlayer() { return nowPlayer; }
 
 	inline bool validPoint(const Vec2& v)
 	{

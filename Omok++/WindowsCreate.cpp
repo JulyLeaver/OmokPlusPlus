@@ -3,15 +3,17 @@
 HINSTANCE WindowsCreate::hInstance;
 const TCHAR* WindowsCreate::CLASS_NAME = TEXT("Omok++");
 
-std::function<void(HDC, PAINTSTRUCT)> WindowsCreate::drawFunc;
-std::function<void(UINT, WPARAM, LPARAM)> WindowsCreate::mouseEventFunc;
+function<void(HDC, PAINTSTRUCT)> WindowsCreate::drawFunc;
+function<void(UINT, WPARAM, LPARAM)> WindowsCreate::mouseEventFunc;
+function<void(WPARAM, LPARAM)> WindowsCreate::cmdEventFunc;
 
 WindowsCreate::WindowsCreate(HINSTANCE hInstance, int nCmdShow)
 {
 	WindowsCreate::hInstance = hInstance;
 
-	WindowsCreate::drawFunc = std::bind(&WindowsCreate::draw, this, std::placeholders::_1, std::placeholders::_2);
-	WindowsCreate::mouseEventFunc = std::bind(&WindowsCreate::mouseEvent, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
+	WindowsCreate::drawFunc = bind(&WindowsCreate::draw, this, placeholders::_1, placeholders::_2);
+	WindowsCreate::mouseEventFunc = bind(&WindowsCreate::mouseEvent, this, placeholders::_1, placeholders::_2, placeholders::_3);
+	WindowsCreate::cmdEventFunc = bind(&WindowsCreate::cmdEvent, this, placeholders::_1, placeholders::_2);
 
 	WNDCLASS wndClass;
 	wndClass.style = CS_HREDRAW | CS_VREDRAW;
@@ -63,17 +65,26 @@ LRESULT CALLBACK WindowsCreate::WndProc(HWND hWnd, UINT iMsg, WPARAM wParam, LPA
 	{
 	case WM_CREATE:
 		return 0;
+
 	case WM_PAINT:
 	//	OutputDebugString("WM_PAINT\n");
 		hdc = BeginPaint(hWnd, &ps);
+
 		drawFunc(hdc, ps);
+
 		EndPaint(hWnd, &ps);
 		return 0;
+
 	case WM_MOUSEMOVE:
 	case WM_LBUTTONDOWN:
 	case WM_RBUTTONDOWN:
 		mouseEventFunc(iMsg, wParam, lParam);
 		return 0;
+
+	case WM_COMMAND:
+		cmdEventFunc(wParam, lParam);
+		return 0;
+
 	case WM_DESTROY:
 		PostQuitMessage(0);
 		return 0;

@@ -1,4 +1,5 @@
 #include "GameBoard.h"
+#include "WindowsCreate.h"
 
 GameBoard::GameBoard(const HWND hWnd, Logger* logger) : Object(hWnd, logger)
 {
@@ -38,6 +39,18 @@ GameBoard::GameBoard(const HWND hWnd, Logger* logger) : Object(hWnd, logger)
 	cursorBrush = CreateSolidBrush(cursorColor);
 	blackPlayerBrush = CreateSolidBrush(blackPlayerColor);
 	whitePlayerBrush = CreateSolidBrush(whitePlayerColor);
+
+	CreateWindow(TEXT("button"), TEXT("Prev"), WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON, 
+		boardMargin * 2 + boardSize,
+		boardMargin, 
+		60, 60, 
+		hWnd, (HMENU)PREV_BUTTON_ID, WindowsCreate::hInstance, NULL);
+
+	CreateWindow(TEXT("button"), TEXT("AI"), WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
+		boardMargin * 2 + boardSize,
+		boardMargin * 2 + 60 / 2,
+		60, 60,
+		hWnd, (HMENU)AI_BUTTON_ID, WindowsCreate::hInstance, NULL);
 }
 
 GameBoard::~GameBoard()
@@ -87,7 +100,7 @@ void GameBoard::draw(HDC& hdc, PAINTSTRUCT& ps)
 			boardMargin + board1pxSize * i.point.x,
 			boardMargin + board1pxSize * i.point.y
 		};
-		ellipse(point, cursorSize, { 0.5f, 0.5f });
+		ellipse(point, cursorSize * 0.9, { 0.5f, 0.5f });
 	}
 
 	if (cursorIdx.x != -1)
@@ -127,6 +140,7 @@ void GameBoard::mouseEvent(UINT& ent, WPARAM& wParam, LPARAM& lParam)
 		if (thisIdx == cursorIdx) return;
 		cursorIdx = thisIdx;
 		InvalidateRect(getHWND(), NULL, true);
+		return;
 	}
 	else if (ent == WM_LBUTTONDOWN)
 	{
@@ -142,5 +156,18 @@ void GameBoard::mouseEvent(UINT& ent, WPARAM& wParam, LPARAM& lParam)
 			logger->log(pointString + "에 이미 돌이 존재합니다.");
 		}
 		return;
+	}
+}
+
+void GameBoard::cmdEvent(WPARAM wParam, LPARAM lParam)
+{
+	const int ID = LOWORD(wParam);
+	if (ID == PREV_BUTTON_ID)
+	{
+		logger->log("이전으로 돌아갑니다.");
+	}
+	else if (ID == AI_BUTTON_ID)
+	{
+		logger->log(Omok::Player2String[static_cast<int>(omok.getNowPlayer())] + "돌을 AI에게 맡깁니다.");
 	}
 }

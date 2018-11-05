@@ -32,3 +32,11 @@ void ObjectManager::mouseEvent(UINT ent, WPARAM wParam, LPARAM lParam)
 		i->mouseEvent(ent, wParam, lParam);
 	}
 }
+
+void ObjectManager::cmdEvent(WPARAM wParam, LPARAM lParam)
+{
+	for (auto i : obj)
+	{
+		i->cmdEvent(wParam, lParam);
+	}
+}

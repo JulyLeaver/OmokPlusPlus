@@ -34,6 +34,8 @@ public:
 	*/
 	virtual void mouseEvent(UINT& ent, WPARAM& wParam, LPARAM& lParam) = 0;
 
+	virtual void cmdEvent(WPARAM wParam, LPARAM lParam) = 0;
+
 	inline void line(const Vec2& sv, const Vec2& ev)
 	{
 		MoveToEx(hdc, sv.x, sv.y, NULL);
@@ -77,4 +79,5 @@ public:
 	inline void add(Object* obj) { this->obj.push_back(obj); }
 	void draw(HDC hdc, PAINTSTRUCT ps);
 	void mouseEvent(UINT ent, WPARAM wParam, LPARAM lParam);
+	void cmdEvent(WPARAM wParam, LPARAM lParam);
 };
