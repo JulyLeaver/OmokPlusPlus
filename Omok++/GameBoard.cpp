@@ -72,8 +72,8 @@ void GameBoard::draw(HDC& hdc, PAINTSTRUCT& ps)
 	}
 
 	SelectObject(hdc, (HPEN)GetStockObject(NULL_PEN));
-	const std::vector<Record>& points = omok.getRecords();
-	for (auto i : points)
+	const set<Record>& records = omok.getRecords();
+	for (auto i : records)
 	{
 		if (i.player == Player::Black)
 		{
@@ -95,11 +95,11 @@ void GameBoard::draw(HDC& hdc, PAINTSTRUCT& ps)
 		SelectObject(hdc, (HPEN)GetStockObject(NULL_PEN));
 		SelectObject(hdc, cursorBrush);
 		square(
-			{ 
-				boardMargin + board1pxSize * cursorIdx.x, 
-				boardMargin + board1pxSize * cursorIdx.y 
+			{
+				boardMargin + board1pxSize * cursorIdx.x,
+				boardMargin + board1pxSize * cursorIdx.y
 			},
-			cursorSize, 
+			cursorSize,
 			{ 0.5f, 0.5f });
 	}
 }
@@ -107,9 +107,11 @@ void GameBoard::draw(HDC& hdc, PAINTSTRUCT& ps)
 void GameBoard::mouseEvent(UINT& ent, WPARAM& wParam, LPARAM& lParam)
 {
 	const int X = LOWORD(lParam), Y = HIWORD(lParam);
+
+	// 게임판 범위 넘어가면 모든것을 무효화 처리
 	if (!Vec2(X, Y).isInside(cursorRect))
 	{
-		if (cursorIdx.x != -1)
+		if (cursorIdx.x != -1) // 움직이는데 게임판 위에 마우스가 존재하지 않는다면
 		{
 			cursorIdx.x = cursorIdx.y = -1;
 			InvalidateRect(getHWND(), NULL, true);
@@ -128,11 +130,17 @@ void GameBoard::mouseEvent(UINT& ent, WPARAM& wParam, LPARAM& lParam)
 	}
 	else if (ent == WM_LBUTTONDOWN)
 	{
+		const string pointString = "(" + to_string(cursorIdx.x) + ", " + to_string(cursorIdx.y) + ")";
 		if (omok.put(cursorIdx))
 		{
+			logger->log(pointString + " " + Omok::Player2String[static_cast<int>(omok.getPointPlayer(cursorIdx))]);
+		//	cursorIdx = { -1,-1 };
+			InvalidateRect(getHWND(), NULL, true);
 		}
 		else
 		{
+			logger->log(pointString + "에 이미 돌이 존재합니다.");
 		}
+		return;
 	}
 }

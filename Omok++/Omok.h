@@ -1,20 +1,26 @@
 #pragma once
 
 #include <vector>
+#include <set>
 #include "util.h"
 
 using namespace std;
 
-using Board = vector<vector<int>>;
+enum class Player { Black = 0, White = 1, None };
 
-enum class Player { Black = 0, White = 1 };
+using Board = vector<vector<Player>>;
 
 struct Record
 {
 	Vec2 point;
 	Player player;
 	Record(const Vec2& point, Player player) : point(point), player(player)
-	{}
+	{
+	}
+	bool operator<(const Record& a) const
+	{
+		return point < a.point;
+	}
 };
 
 class Omok
@@ -28,24 +34,24 @@ private:
 
 public:
 	const static int SIZE = 15;
+	const static char* Player2String[2];
 
 private:
 	Board board;
-	vector<Record> records;
+	set<Record> records;
 
-	bool _auto;
-	Player player;
+	bool autoPlay;
+	Player nowPlayer;
 public:
 	Omok();
 	~Omok();
 
 	bool put(const Vec2& v);
 
-	inline void autoPlay(bool _auto) { this->_auto = _auto; }
+	inline void setAutoPlay(bool _auto) { this->autoPlay = _auto; }
 	inline const Board& getBoard() { return board; }
-	inline const vector<Record>& getRecords() { return records; }
-
-//	int minimax(const Board& board, )
+	inline const set<Record>& getRecords() { return records; }
+	inline Player getPointPlayer(const Vec2& p) { return board[p.y][p.x]; }
 
 	inline bool validPoint(const Vec2& v)
 	{
@@ -58,7 +64,7 @@ public:
 	inline bool ablePoint(const Board& board, const Vec2& v)
 	{
 		if (!validPoint(v)) return false;
-		return board[v.y][v.x] == -1;
+		return board[v.y][v.x] == Player::None;
 	}
 
 	Vec2 playerEndLinePoint(const Board& board, const Vec2& start, const Player player, const Direction dir)
@@ -68,7 +74,7 @@ public:
 		while (
 			0 <= r + delR && r + delR < SIZE &&
 			0 <= c + delC && c + delC < SIZE &&
-			board[r + delR][c + delC] == static_cast<int>(player)
+			board[r + delR][c + delC] == player
 			)
 		{
 			r += delR;
@@ -76,10 +82,5 @@ public:
 		}
 		return { r, c };
 	}
-
-	/*
-	5 <= cc : INF
-	*/
-//	int calcCost(const Board& board, const int player);
 };
 

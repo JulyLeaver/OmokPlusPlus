@@ -33,12 +33,12 @@ WindowsCreate::WindowsCreate(HINSTANCE hInstance, int nCmdShow)
 		WND_WIDTH, WND_HEIGHT, NULL, NULL, hInstance, NULL);
 	ShowWindow(this->hWnd, nCmdShow);
 
-	OutputDebugString("Windows Create End\n");
+//	OutputDebugString("Windows Create End\n");
 }
 
 MSG WindowsCreate::start()
 {
-	OutputDebugString("START\n");
+//	OutputDebugString("START\n");
 
 	init();
 
@@ -58,12 +58,13 @@ LRESULT CALLBACK WindowsCreate::WndProc(HWND hWnd, UINT iMsg, WPARAM wParam, LPA
 {
 	static HDC hdc;
 	static PAINTSTRUCT ps;
+
 	switch (iMsg)
 	{
 	case WM_CREATE:
 		return 0;
 	case WM_PAINT:
-		OutputDebugString("WM_PAINT\n");
+	//	OutputDebugString("WM_PAINT\n");
 		hdc = BeginPaint(hWnd, &ps);
 		drawFunc(hdc, ps);
 		EndPaint(hWnd, &ps);
