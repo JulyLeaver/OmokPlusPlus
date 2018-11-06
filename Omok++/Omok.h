@@ -1,7 +1,6 @@
 #pragma once
 
 #include <vector>
-#include <set>
 #include "util.h"
 
 using namespace std;
@@ -38,7 +37,7 @@ public:
 
 private:
 	Board board;
-	set<Record> records;
+	vector<Record> records;
 
 	bool autoPlay;
 	Player nowPlayer;
@@ -47,13 +46,32 @@ public:
 	~Omok();
 
 	bool put(const Vec2& v);
+	inline void reset()
+	{
+		board = vector<vector<Player>>(SIZE, vector<Player>(SIZE, Player::None));
+		records.clear();
+
+		autoPlay = false;
+		nowPlayer = Player::Black;
+		put({ SIZE / 2, SIZE / 2 });
+	}
 
 	inline void setAutoPlay(bool _auto) { this->autoPlay = _auto; }
 	inline const Board& getBoard() { return board; }
-	inline const set<Record>& getRecords() { return records; }
+	inline const vector<Record>& getRecords() { return records; }
+	inline void delPrevRecord()
+	{
+		if (1 < records.size())
+		{
+			board[records.back().point.y][records.back().point.x] = Player::None;
+			records.pop_back();
+			nowPlayer = nowPlayer == Player::Black ? Player::White : Player::Black;
+		}
+	}
 	inline Player getPointPlayer(const Vec2& p) { return board[p.y][p.x]; }
 	inline Player getNowPlayer() { return nowPlayer; }
 
+private:
 	inline bool validPoint(const Vec2& v)
 	{
 		return (
@@ -82,6 +100,11 @@ public:
 			c += delC;
 		}
 		return { r, c };
+	}
+
+	int calcCost(const Board& board)
+	{
+
 	}
 };
 

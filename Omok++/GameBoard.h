@@ -25,6 +25,7 @@ private:
 	COLORREF cursorColor;
 	COLORREF blackPlayerColor;
 	COLORREF whitePlayerColor;
+	COLORREF finallyPointColor;
 
 	HPEN boardEdgePen;
 	HPEN boardLinePen;
@@ -33,13 +34,15 @@ private:
 	HBRUSH cursorBrush;
 	HBRUSH blackPlayerBrush;
 	HBRUSH whitePlayerBrush;
+	HBRUSH finallyPointBrush;
 
 private:
 	Omok omok;
 
 public:
-	const int PREV_BUTTON_ID = 1000;
-	const int AI_BUTTON_ID = 1001;
+	const int NEW_GAME_BUTTON_ID = 1000;
+	const int PREV_BUTTON_ID = 1001;
+	const int AI_BUTTON_ID = 1002;
 
 public:
 	GameBoard(const HWND hWnd, Logger* logger);
@@ -47,5 +50,7 @@ public:
 	virtual void draw(HDC& hdc, PAINTSTRUCT& ps) override;
 	virtual void mouseEvent(UINT& ent, WPARAM& wParam, LPARAM& lParam) override;
 	virtual void cmdEvent(WPARAM wParam, LPARAM lParam) override;
+
+	void omokStart();
 };
 

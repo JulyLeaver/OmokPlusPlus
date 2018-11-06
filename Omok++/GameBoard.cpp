@@ -19,7 +19,7 @@ GameBoard::GameBoard(const HWND hWnd, Logger* logger) : Object(hWnd, logger)
 	cursorIdx = { -1,-1 };
 	cursorRect =
 	{
-		boardMargin - board1pxSize / 2, 
+		boardMargin - board1pxSize / 2,
 		boardMargin - board1pxSize / 2,
 
 		boardMargin + boardSize + board1pxSize / 2,
@@ -31,6 +31,7 @@ GameBoard::GameBoard(const HWND hWnd, Logger* logger) : Object(hWnd, logger)
 	cursorColor = RGB(255, 255, 0);
 	blackPlayerColor = RGB(0, 0, 0);
 	whitePlayerColor = RGB(255, 255, 255);
+	finallyPointColor = RGB(255, 0, 0);
 
 	boardEdgePen = CreatePen(PS_SOLID, 2, boardLineColor);
 	boardLinePen = CreatePen(PS_SOLID, 1, boardLineColor);
@@ -39,18 +40,27 @@ GameBoard::GameBoard(const HWND hWnd, Logger* logger) : Object(hWnd, logger)
 	cursorBrush = CreateSolidBrush(cursorColor);
 	blackPlayerBrush = CreateSolidBrush(blackPlayerColor);
 	whitePlayerBrush = CreateSolidBrush(whitePlayerColor);
+	finallyPointBrush = CreateSolidBrush(finallyPointColor);
 
-	CreateWindow(TEXT("button"), TEXT("Prev"), WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON, 
+	CreateWindow(TEXT("button"), TEXT("New"), WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
 		boardMargin * 2 + boardSize,
-		boardMargin, 
-		60, 60, 
+		boardMargin,
+		60, 60,
+		hWnd, (HMENU)NEW_GAME_BUTTON_ID, WindowsCreate::hInstance, NULL);
+
+	CreateWindow(TEXT("button"), TEXT("Prev"), WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
+		boardMargin * 2 + boardSize,
+		boardMargin + 60 + 20,
+		60, 60,
 		hWnd, (HMENU)PREV_BUTTON_ID, WindowsCreate::hInstance, NULL);
 
 	CreateWindow(TEXT("button"), TEXT("AI"), WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
 		boardMargin * 2 + boardSize,
-		boardMargin * 2 + 60 / 2,
+		boardMargin + 120 + 40,
 		60, 60,
 		hWnd, (HMENU)AI_BUTTON_ID, WindowsCreate::hInstance, NULL);
+
+	omokStart();
 }
 
 GameBoard::~GameBoard()
@@ -60,6 +70,9 @@ GameBoard::~GameBoard()
 
 	DeleteObject(boardBackgroungBrush);
 	DeleteObject(cursorBrush);
+	DeleteObject(blackPlayerBrush);
+	DeleteObject(whitePlayerBrush);
+	DeleteObject(finallyPointBrush);
 }
 
 void GameBoard::draw(HDC& hdc, PAINTSTRUCT& ps)
@@ -85,7 +98,7 @@ void GameBoard::draw(HDC& hdc, PAINTSTRUCT& ps)
 	}
 
 	SelectObject(hdc, (HPEN)GetStockObject(NULL_PEN));
-	const set<Record>& records = omok.getRecords();
+	const auto& records = omok.getRecords();
 	for (auto i : records)
 	{
 		if (i.player == Player::Black)
@@ -102,6 +115,14 @@ void GameBoard::draw(HDC& hdc, PAINTSTRUCT& ps)
 		};
 		ellipse(point, cursorSize * 0.9, { 0.5f, 0.5f });
 	}
+
+	SelectObject(hdc, (HPEN)GetStockObject(NULL_PEN));
+	SelectObject(hdc, finallyPointBrush);
+	const Vec2 finallyPoint = {
+			boardMargin + board1pxSize * records.back().point.x,
+			boardMargin + board1pxSize * records.back().point.y
+	};
+	square(finallyPoint, cursorSize * 0.35, { 0.5f, 0.5f });
 
 	if (cursorIdx.x != -1)
 	{
@@ -165,9 +186,27 @@ void GameBoard::cmdEvent(WPARAM wParam, LPARAM lParam)
 	if (ID == PREV_BUTTON_ID)
 	{
 		logger->log("이전으로 돌아갑니다.");
+		const auto& records = omok.getRecords();
+		omok.delPrevRecord();
+		InvalidateRect(getHWND(), NULL, true);
 	}
 	else if (ID == AI_BUTTON_ID)
 	{
 		logger->log(Omok::Player2String[static_cast<int>(omok.getNowPlayer())] + "돌을 AI에게 맡깁니다.");
 	}
+	else if (ID == NEW_GAME_BUTTON_ID)
+	{
+	//	logger->log("새로운 게임을 시작합니다.");
+		omokStart();
+	}
+}
+
+void GameBoard::omokStart()
+{
+	omok.reset();
+	InvalidateRect(getHWND(), NULL, true);
+
+	system("cls");
+	const string startPoint = "(" + to_string(Omok::SIZE / 2) + ", " + to_string(Omok::SIZE / 2) + ")";
+	logger->log(startPoint + " 흑");
 }
